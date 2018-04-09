@@ -144,7 +144,7 @@ class DriveKelner(actions.Driver):
                 self.target.do(ruch)
             if(rozkaz == 'ZATANKUJ'):
                 ruch = MoveTo(self.target.position,0)
-                for i in shortest_path(G, cAdres, 'stacja'):
+                for i in shortest_path(G, cAdres, 'wojtyniaka'):
                   ruch += MoveTo(miejsca[i], 2)
                 self.target.do(ruch)
             if(rozkaz == 'ZAWIEĹą'):
@@ -182,15 +182,15 @@ class DriveKelner(actions.Driver):
                   isPack = False
                 if(packAdres == 'orlicza'):
                   isPicked = True
-            if(self.target.position == miejsca['pascala']):
-                paczki['pascala'].opacity = 0
+            if(self.target.position == miejsca['kuchnia']):
+                paczki['kuchnia'].opacity = 0
                 inAction = False
-                cAdres = 'pascala'
-                if(packAdres == 'pascala'):
+                cAdres = 'kuchnia'
+                if(packAdres == 'kuchnia'):
                   isPicked = True
-                if(cel == 'pascala' and isPicked):
+                if(cel == 'kuchnia' and isPicked):
                   isPack = False
-                if(packAdres == 'pascala'):
+                if(packAdres == 'kuchnia'):
                   isPicked = True
             if(self.target.position == miejsca['kopernika']):
                 paczki['kopernika'].opacity = 0
@@ -212,9 +212,9 @@ class DriveKelner(actions.Driver):
                   isPack = False
                 if(packAdres == 'borsuka'):
                   isPicked = True
-            if(self.target.position == miejsca['stacja']):
+            if(self.target.position == miejsca['wojtyniaka']):
                 inAction = False
-                cAdres = 'stacja'
+                cAdres = 'wojtyniaka'
             if(cAdres == cel):
               isPicked = True
   
@@ -238,12 +238,12 @@ def main():
     packAdres = ''
 
     scroller = layer.ScrollingManager()
-    test_layer = tiles.load('mapaKCK.tmx')['Warstwa Kafelków 1']
-    obj = tiles.load('mapaKCK.tmx')['GameObjects']
-    poi = tiles.load('mapaKCK.tmx')['Points']
+    test_layer = tiles.load('mapaSZI.tmx')['Warstwa Kafelków 1']
+    obj = tiles.load('mapaSZI.tmx')['GameObjects']
+    poi = tiles.load('mapaSZI.tmx')['Points']
     scroller.add(test_layer)
 #0=start, 1=up, 2=bottom 3=bottom1,
-#0=stacja, 1=mickiewicza, 2=kopernika, 3=orlicza, 4= pascala, 5=borsuka
+#0=wojtyniaka, 1=mickiewicza, 2=kopernika, 3=orlicza, 4= kuchnia, 5=borsuka
     kelner_layer = layer.ScrollableLayer()
     kelner = cocos.sprite.Sprite('kelner.png')
     kelner_layer.add(kelner)
@@ -269,9 +269,9 @@ def main():
     bottom1Y = poi.objects[3].y
     miejsca['bottom1'] = (bottom1X, bottom1Y)
 
-    stacjaX = obj.objects[0].x
-    stacjaY = obj.objects[0].y
-    miejsca['stacja'] = (stacjaX, stacjaY)
+    wojX = obj.objects[0].x
+    wojY = obj.objects[0].y
+    miejsca['wojtyniaka'] = (wojX, wojY)
 
     micX = obj.objects[1].x
     micY = obj.objects[1].y
@@ -285,9 +285,9 @@ def main():
     orlY = obj.objects[3].y
     miejsca['orlicza'] = (orlX, orlY)
 
-    pasX = obj.objects[4].x
-    pasY = obj.objects[4].y
-    miejsca['pascala'] = (pasX, pasY)
+    kuchX = obj.objects[4].x
+    kuchY = obj.objects[4].y
+    miejsca['kuchnia'] = (kuchX, kuchY)
 
     borX = obj.objects[5].x
     borY = obj.objects[5].y
@@ -295,22 +295,22 @@ def main():
 
     paczki['mickiewicza'] = cocos.sprite.Sprite('menu.png')
     paczki['orlicza'] = cocos.sprite.Sprite('menu.png')
-    paczki['pascala'] = cocos.sprite.Sprite('menu.png')
+    paczki['kuchnia'] = cocos.sprite.Sprite('menu.png')
     paczki['kopernika'] = cocos.sprite.Sprite('menu.png')
     paczki['borsuka'] = cocos.sprite.Sprite('menu.png')
     paczki['mickiewicza'].position = miejsca['mickiewicza']
     paczki['orlicza'].position = miejsca['orlicza']
-    paczki['pascala'].position = miejsca['pascala']
+    paczki['kuchnia'].position = miejsca['kuchnia']
     paczki['kopernika'].position = miejsca['kopernika']
     paczki['borsuka'].position = miejsca['borsuka']
     kelner_layer.add(paczki['mickiewicza'])
     kelner_layer.add(paczki['orlicza'])
-    kelner_layer.add(paczki['pascala'])
+    kelner_layer.add(paczki['kuchnia'])
     kelner_layer.add(paczki['kopernika'])
     kelner_layer.add(paczki['borsuka'])
     paczki['mickiewicza'].opacity = 0
     paczki['orlicza'].opacity = 0
-    paczki['pascala'].opacity = 0
+    paczki['kuchnia'].opacity = 0
     paczki['kopernika'].opacity = 0
     paczki['borsuka'].opacity = 0
     
@@ -321,8 +321,8 @@ def main():
     G.add_vertex('up')
     G.add_vertex('borsuka')
     G.add_vertex('bottom1')
-    G.add_vertex('stacja')
-    G.add_vertex('pascala')
+    G.add_vertex('wojtyniaka')
+    G.add_vertex('kuchnia')
     G.add_vertex('orlicza')
     G.add_vertex('bottom')
     G.add_vertex('kopernika')
@@ -331,9 +331,9 @@ def main():
     G.add_edge('mickiewicza', 'up', 2)
     G.add_edge('up', 'borsuka', 2)
     G.add_edge('borsuka', 'bottom1', 4)
-    G.add_edge('bottom1', 'stacja', 1)
-    G.add_edge('bottom1', 'pascala', 3)
-    G.add_edge('pascala', 'orlicza', 5)
+    G.add_edge('bottom1', 'wojtyniaka', 1)
+    G.add_edge('bottom1', 'kuchnia', 3)
+    G.add_edge('kuchnia', 'orlicza', 5)
     G.add_edge('orlicza', 'bottom', 3)
     G.add_edge('bottom', 'kopernika', 3)
     G.add_edge('kopernika', 'start', 3)
@@ -342,17 +342,17 @@ def main():
     G.add_edge('up', 'mickiewicza', 2)
     G.add_edge('borsuka', 'up', 2)
     G.add_edge('bottom1', 'borsuka', 4)
-    G.add_edge('stacja', 'bottom1', 1)
-    G.add_edge('pascala', 'bottom1', 3)
-    G.add_edge('orlicza', 'pascala', 5)
+    G.add_edge('wojtyniaka', 'bottom1', 1)
+    G.add_edge('kuchnia', 'bottom1', 3)
+    G.add_edge('orlicza', 'kuchnia', 5)
     G.add_edge('bottom', 'orlicza', 3)
     G.add_edge('kopernika', 'bottom', 3)
     G.add_edge('start', 'kopernika', 3)
 
-    print(shortest_path(G, 'mickiewicza', 'pascala'))
+    print(shortest_path(G, 'mickiewicza', 'kuchnia'))
     print( paczki[random.choice(list(paczki))].position )
 
-    short = shortest_path(G, 'mickiewicza', 'pascala')
+    short = shortest_path(G, 'mickiewicza', 'kuchnia')
 
     kelner.position = miejsca['start']
     kelner.rotation = 90
