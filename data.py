@@ -64,7 +64,7 @@ napoj_bezalkoholowy(X) <= sok(X)
 + zupa_wegetarianska('ogórkowa')
 + zupa_wegetarianska('chłodnik')
 
-pierwsze_danie_wegetarianskie(X) <= zupa(X)
+pierwsze_danie_wegetarianskie(X) <= zupa_wegetarianska(X)
 
 + danie_glowne_wegetarianskie('naleśniki z serem')
 
