@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.4" orientation="orthogonal" renderorder="right-down" width="8" height="6" tilewidth="100" tileheight="100" infinite="0" nextobjectid="49">
+ <tileset firstgid="1" source="mapaSZI.tsx"/>
+ <tileset firstgid="155" source="mapaSZI2.tsx"/>
+ <layer name="Warstwa Kafelków 1" width="8" height="6">
+  <data encoding="csv">
+155,156,157,158,159,160,161,162,
+163,164,165,166,167,168,169,170,
+171,172,173,174,175,176,177,178,
+179,180,181,182,183,184,185,186,
+187,188,189,190,191,192,193,194,
+195,196,197,198,199,200,201,202
+</data>
+ </layer>
+ <objectgroup name="Warstwa Obiektu 1">
+  <object id="1" name="mickiewicza" x="0" y="0" width="99" height="99"/>
+  <object id="2" name="2" x="100" y="0" width="99" height="99"/>
+  <object id="3" name="borsuka" x="200" y="0" width="99" height="99"/>
+  <object id="4" name="4" x="300" y="0" width="99" height="99"/>
+  <object id="5" name="orlicza" x="400" y="0" width="99" height="99"/>
+  <object id="6" name="staff" x="500" y="0" width="99" height="99"/>
+  <object id="7" name="7" x="600" y="0" width="99" height="99"/>
+  <object id="8" name="kuchnia" x="700" y="0" width="99" height="99"/>
+  <object id="9" name="9" x="0" y="100" width="99" height="99"/>
+  <object id="10" name="10" x="100" y="100" width="99" height="99"/>
+  <object id="11" name="11" x="200" y="100" width="99" height="99"/>
+  <object id="12" name="12" x="300" y="100" width="99" height="99"/>
+  <object id="13" name="13" x="400" y="100" width="99" height="99"/>
+  <object id="14" name="14" x="500" y="100" width="99" height="99"/>
+  <object id="15" name="15" x="600" y="100" width="99" height="99"/>
+  <object id="16" name="turinga" x="700" y="100" width="99" height="99"/>
+  <object id="17" name="kopernika" x="0" y="200" width="99" height="99"/>
+  <object id="18" name="18" x="100" y="200" width="99" height="99"/>
+  <object id="19" name="norviga" x="200" y="200" width="99" height="99"/>
+  <object id="20" name="20" x="300" y="200" width="99" height="99"/>
+  <object id="21" name="russella" x="400" y="200" width="99" height="99"/>
+  <object id="22" name="22" x="500" y="200" width="99" height="99"/>
+  <object id="23" name="23" x="600" y="200" width="99" height="99"/>
+  <object id="24" name="24" x="700" y="200" width="99" height="99"/>
+  <object id="25" name="25" type="25" x="0" y="300" width="99" height="99"/>
+  <object id="26" name="26" x="100" y="300" width="99" height="99"/>
+  <object id="27" name="simona" x="200" y="300" width="99" height="99"/>
+  <object id="28" name="28" x="300" y="300" width="99" height="99"/>
+  <object id="29" name="29" x="400" y="300" width="99" height="99"/>
+  <object id="30" name="30" x="500" y="300" width="99" height="99"/>
+  <object id="31" name="31" x="600" y="300" width="99" height="99"/>
+  <object id="32" name="fredry" x="700" y="300" width="99" height="99"/>
+  <object id="33" name="33" x="0" y="400" width="99" height="99"/>
+  <object id="34" name="34" x="100" y="400" width="99" height="99"/>
+  <object id="35" name="35" x="200" y="400" width="99" height="99"/>
+  <object id="36" name="36" x="300" y="400" width="99" height="99"/>
+  <object id="37" name="37" x="400" y="400" width="99" height="99"/>
+  <object id="38" name="nilssona" x="500" y="400" width="99" height="99"/>
+  <object id="39" name="39" x="600" y="400" width="99" height="99"/>
+  <object id="40" name="40" x="700" y="400" width="99" height="99"/>
+  <object id="41" name="wc" x="0" y="500" width="99" height="99"/>
+  <object id="42" name="42" x="100" y="500" width="99" height="99"/>
+  <object id="43" name="dzika" x="200" y="500" width="99" height="99"/>
+  <object id="44" name="44" x="300" y="500" width="99" height="99"/>
+  <object id="45" name="45" x="400" y="500" width="99" height="99"/>
+  <object id="46" name="kruka" x="500" y="500" width="99" height="99"/>
+  <object id="47" name="47" x="600" y="500" width="99" height="99"/>
+  <object id="48" name="cicha" x="700" y="500" width="99" height="99"/>
+ </objectgroup>
+</map>
