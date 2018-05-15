@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.4" orientation="orthogonal" renderorder="right-down" width="14" height="11" tilewidth="50" tileheight="52" infinite="0" nextobjectid="11">
+<map version="1.0" tiledversion="1.1.4" orientation="orthogonal" renderorder="right-down" width="14" height="11" tilewidth="50" tileheight="52" infinite="0" nextobjectid="17">
  <tileset firstgid="1" name="mapaPNG3" tilewidth="50" tileheight="52" tilecount="154" columns="14">
   <image source="mapaKCK.png" width="700" height="572"/>
  </tileset>
@@ -20,12 +20,11 @@
 </data>
  </layer>
  <objectgroup name="Points" offsetx="-2" offsety="0">
-  <object id="1" name="start" x="51" y="140" width="50" height="50"/>
-  <object id="2" name="up" x="490" y="140" width="50" height="50"/>
+  <object id="1" name="start" x="0" y="2" width="50" height="50"/>
   <object id="3" name="bottom" x="215" y="140" width="50" height="50"/>
   <object id="4" name="bottom1" x="490" y="380" width="50" height="50"/>
  </objectgroup>
- <objectgroup name="GameObjects">
+ <objectgroup name="GameObjects" locked="1">
   <object id="5" name="wojtyniaka" x="618" y="380" width="50" height="50"/>
   <object id="6" name="mickiewicza" x="357" y="140" width="50" height="50"/>
   <object id="7" name="kopernika" x="49" y="380" width="50" height="50"/>
