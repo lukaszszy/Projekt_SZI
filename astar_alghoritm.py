@@ -1,38 +1,31 @@
 import heapq
 
 class PriorityQueue:
-    """ Kolejka priorytetowa"""
     def __init__(self, f=lambda x: x):
         self.heap = []
         self.f = f
 
     def append(self, item):
-        """ Wstawianie elementu """
         heapq.heappush(self.heap, (self.f(item), item))
 
     def pop(self):
-        """ Zwrócenie elementu """
         if self.heap:
             return heapq.heappop(self.heap)[1]
         else:
             raise Exception('Trying to pop from empty PriorityQueue.')
 
     def __len__(self):
-        """ Zwrócenie długości kolejki. """
         return len(self.heap)
 
     def __contains__(self, item):
-        """ Zwraca wartość True jeśli element jest w kolejce. """
         return (self.f(item), item) in self.heap
 
     def __getitem__(self, key):
-        """ Pobranie elementu. """
         for _, item in self.heap:
             if item == key:
                 return item
 
     def __delitem__(self, key):
-        """ Usunięcie pierwszego wystąpienia klucza. """
         self.heap.remove((self.f(key), key))
         heapq.heapify(self.heap)
 
@@ -135,26 +128,25 @@ class PlanRoute():
 
     def actions(self, state):
         """Zbior wszystkich akcji. """
-        possible_actions = ['Forward', 'TurnLeft', 'TurnRight']
+        possible_actions = ['Prosto', 'SkretLewo', 'SkretPrawo']
         """Aktualne położenie agenta."""
 
         x = state[0]
         y = state[1]
         dir = state[2]
 
-        # Zapobieganie niedozwolonym akcjom
         if x == 0 and dir == 'W':
-            if 'Forward' in possible_actions:
-                possible_actions.remove('Forward')
+            if 'Prosto' in possible_actions:
+                possible_actions.remove('Prosto')
         if y == 0 and dir == 'N':
-            if 'Forward' in possible_actions:
-                possible_actions.remove('Forward')
+            if 'Prosto' in possible_actions:
+                possible_actions.remove('Prosto')
         if x == (self.dimrow - 1) and dir == 'E':
-            if 'Forward' in possible_actions:
-                possible_actions.remove('Forward')
+            if 'Prosto' in possible_actions:
+                possible_actions.remove('Prosto')
         if y == (self.dimrow - 1) and dir == 'S':
-            if 'Forward' in possible_actions:
-                possible_actions.remove('Forward')
+            if 'Prosto' in possible_actions:
+                possible_actions.remove('Prosto')
 
         return possible_actions
 
@@ -166,7 +158,7 @@ class PlanRoute():
         proposed_loc = [x, y]
 
         # Ruchy agenta
-        if action == 'Forward':
+        if action == 'Prosto':
             if dir == 'N':
                 proposed_loc = [x, y - 1]
             elif dir == 'S':
@@ -176,9 +168,9 @@ class PlanRoute():
             elif dir == 'E':
                 proposed_loc = [x + 1, y]
             else:
-                raise Exception('InvalidOrientation')
+                raise Exception('InvalidAction')
 
-        elif action == 'TurnLeft':
+        elif action == 'SkretLewo':
             if dir == 'N':
                 dir = 'W'
             elif dir == 'S':
@@ -188,9 +180,9 @@ class PlanRoute():
             elif dir == 'W':
                 dir = 'S'
             else:
-                raise Exception('InvalidOrientation')
+                raise Exception('InvalidAction')
 
-        elif action == 'TurnRight':
+        elif action == 'SkretPrawo':
             if dir == 'N':
                 dir = 'E'
             elif dir == 'S':
@@ -200,7 +192,7 @@ class PlanRoute():
             elif dir == 'W':
                 dir = 'N'
             else:
-                raise Exception('InvalidOrientation')
+                raise Exception('InvalidAction')
 
         if (proposed_loc[0], proposed_loc[1]) not in self.walls.wallsAll:
             state = (proposed_loc[0], proposed_loc[1], dir)
