@@ -33,7 +33,7 @@ key = ['E', 'S', 'W', 'N']
 kuchnia = {kuchnia_x, kuchnia_y}
 tree = {(0,2),(0,4),(9,3),(9,5)}
 klient = {(8, 2), (8, 5), (8, 8), (5, 2), (5, 5), (5, 8), (2, 2), (2, 5), (2, 8)} #położenie klientów na mapie
-wallsSet = klient | wc | kuchnia
+wallsSet = klient | wc | kuchnia | tree
 
 
 #myArray=[[0 for j in range(31)] for i in range(21)]
