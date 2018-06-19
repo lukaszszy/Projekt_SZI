@@ -27,6 +27,7 @@ wc_y = 9
 wc = set([(wc_x, wc_y)])
 kuchnia_x = 9
 kuchnia_y = 0
+kuchnia = set([kuchnia_x, kuchnia_y])
 
 klient = set([(8, 2), (8, 5), (8, 8)])
 klient2 = set([(5, 2), (5, 5), (5, 8)])
@@ -43,16 +44,18 @@ for x in range (0, 20):
         b = random.randint(0,20)
         myArray[a][b]=2
 
-wallsSet = klient | klient2 | wc 
+wallsSet = klient | klient2 | klient3 | wc | kuchnia
 
 class Walls:
-    def __init__(self, klient, klient2, wc):
+    def __init__(self, klient, klient2, klient3, wc, kuchnia):
         self.klient = klient
         self.klient2 = klient2
+        self.klient3 = klient3
         self.wc = wc
-        self.wallsAll = klient | klient2  | wc  
+        self.kuchnia = kuchnia
+        self.wallsAll = klient | klient2 | klient3 | wc | kuchnia  
 
-walls = Walls(klient, klient2, wc)
+walls = Walls(klient, klient2, klient3, wc, kuchnia)
 solution = None
 solution_len = 0
 
