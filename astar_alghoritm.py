@@ -1,17 +1,42 @@
-from utils import *
+import heapq
 
-class Problem(object):
-    
-    def __init__(self, initial, goal=None):
-        self.initial = initial
-        self.goal = goal
+class PriorityQueue:
+    """ Kolejka priorytetowa"""
+    def __init__(self, f=lambda x: x):
+        self.heap = []
+        self.f = f
 
-    def path_cost(self, c, state1, action, state2):
-        return c + 1
+    def append(self, item):
+        """ Wstawianie elementu """
+        heapq.heappush(self.heap, (self.f(item), item))
 
+    def pop(self):
+        """ Zwrócenie elementu """
+        if self.heap:
+            return heapq.heappop(self.heap)[1]
+        else:
+            raise Exception('Trying to pop from empty PriorityQueue.')
+
+    def __len__(self):
+        """ Zwrócenie długości kolejki. """
+        return len(self.heap)
+
+    def __contains__(self, item):
+        """ Zwraca wartość True jeśli element jest w kolejce. """
+        return (self.f(item), item) in self.heap
+
+    def __getitem__(self, key):
+        """ Pobranie elementu. """
+        for _, item in self.heap:
+            if item == key:
+                return item
+
+    def __delitem__(self, key):
+        """ Usunięcie pierwszego wystąpienia klucza. """
+        self.heap.remove((self.f(key), key))
+        heapq.heapify(self.heap)
 
 class Node:
-    
     def __init__(self, state, parent=None, action=None, path_cost=0):
         self.state = state
         self.parent = parent
@@ -34,7 +59,7 @@ class Node:
                     problem.path_cost(self.path_cost, self.state,
                                       action, next_node))
 
-    def reconstruct_path(self):
+    def solution(self):
         return [node.action for node in self.path()[1:]]
 
     def path(self):
@@ -44,15 +69,19 @@ class Node:
             node = node.parent
         return list(reversed(path_back))
 
-
-def best_first_search(problem, f):
+def best_first_graph_search(problem, f):
 
     "Zbior wezlow już uwzględnionych"
     closedSet = set()
 
     "Zbior wezlow jeszcze nie uwzglednioncyh. Na poczatku jeden."
     current = Node(problem.initial)
-    openSet = PriorityQueue('min', f)
+    openSet = PriorityQueue(f)
+	
+    if problem.goal_test(current.state):
+        return current
+    if problem.goal in problem.walls.wallsAll:
+        return None
     openSet.append(current)
 
     "Dopoki openSet nie jest pusty."
@@ -92,81 +121,104 @@ def best_first_search(problem, f):
                     openSet.append(child)
                     
     return None
-    
 
 def astar_search(problem):
-    
-    heuristic = problem.heuristic
-    function = lambda n: n.path_cost + heuristic(n)
+    h = problem.h
+    return best_first_graph_search(problem, lambda n: n.path_cost + h(n))
 
-    "Best First Search z funkcją f(n) = g(n)+h(n)."
-    return best_first_search(problem, function)
-
-
-class Plan_Route(Problem):
-
-    def __init__(self, initial, goal, walls):
-
-        Problem.__init__(self, initial, goal)
+class PlanRoute():
+    def __init__(self, initial, goal, walls, dimrow):
+        self.initial = initial
+        self.goal = goal
         self.walls = walls
-        
-        self.x_size = 30
-        self.y_size = 20
+        self.dimrow = dimrow
 
     def actions(self, state):
+        """Zbior wszystkich akcji. """
+        possible_actions = ['Forward', 'TurnLeft', 'TurnRight']
+        """Aktualne położenie agenta."""
 
-        "Zbior wszystkich akcji."
-        actions = ['prawo', 'lewo', 'gora', 'dol']
+        x = state[0]
+        y = state[1]
+        dir = state[2]
 
-        "Aktualne położenie agenta."
-        x,y = state
+        # Zapobieganie niedozwolonym akcjom
+        if x == 0 and dir == 'W':
+            if 'Forward' in possible_actions:
+                possible_actions.remove('Forward')
+        if y == 0 and dir == 'N':
+            if 'Forward' in possible_actions:
+                possible_actions.remove('Forward')
+        if x == (self.dimrow - 1) and dir == 'E':
+            if 'Forward' in possible_actions:
+                possible_actions.remove('Forward')
+        if y == (self.dimrow - 1) and dir == 'S':
+            if 'Forward' in possible_actions:
+                possible_actions.remove('Forward')
 
-        "Zbior wszystkich mozliwych akcji."
-        if x == 0:
-            if 'lewo' in actions:
-                actions.remove('lewo')
-        if x == (self.x_size - 1):
-            if 'prawo' in actions:
-                actions.remove('prawo')
-        if y == 0:
-            if 'gora' in actions:
-                actions.remove('gora')
-        if y == (self.y_size - 1):
-            if 'dol' in actions:
-                actions.remove('dol')
-
-        return actions
+        return possible_actions
 
     def result(self, state, action):
-        x,y = state
-        proposed_loc = tuple()
+        """ Dla danego stanu i akcji zwracany jest nowy stan, który jest wynikiem danej akcji. """
+        x = state[0]
+        y = state[1]
+        dir = state[2]
+        proposed_loc = [x, y]
 
-        if action == 'gora':
-            proposed_loc = (x, y - 1)
-        elif action == 'dol':
-            proposed_loc = (x, y + 1)
-        elif action == 'lewo':
-            proposed_loc = (x - 1, y)
-        elif action == 'prawo':
-            proposed_loc = (x + 1, y)
-        else:
-            raise Exception('InvalidAction')
+        # Ruchy agenta
+        if action == 'Forward':
+            if dir == 'N':
+                proposed_loc = [x, y - 1]
+            elif dir == 'S':
+                proposed_loc = [x, y + 1]
+            elif dir == 'W':
+                proposed_loc = [x - 1, y]
+            elif dir == 'E':
+                proposed_loc = [x + 1, y]
+            else:
+                raise Exception('InvalidOrientation')
 
-        if proposed_loc not in self.walls:
-            state = proposed_loc
+        elif action == 'TurnLeft':
+            if dir == 'N':
+                dir = 'W'
+            elif dir == 'S':
+                dir = 'E'
+            elif dir == 'E':
+                dir = 'N'
+            elif dir == 'W':
+                dir = 'S'
+            else:
+                raise Exception('InvalidOrientation')
+
+        elif action == 'TurnRight':
+            if dir == 'N':
+                dir = 'E'
+            elif dir == 'S':
+                dir = 'W'
+            elif dir == 'E':
+                dir = 'S'
+            elif dir == 'W':
+                dir = 'N'
+            else:
+                raise Exception('InvalidOrientation')
+
+        if (proposed_loc[0], proposed_loc[1]) not in self.walls.wallsAll:
+            state = (proposed_loc[0], proposed_loc[1], dir)
 
         return state
 
-
-    "Punkt docelowy"
     def goal_test(self, state):
-        return state == self.goal
+        "Punkt docelowy"
+        return (state[0] == self.goal[0]) and (state[1] == self.goal[1])
+
+    def path_cost(self, c, state1, action, state2):
+        return c + 1
 
 
-    "Funkcja heurystyczna"
-    def heuristic(self, node):
-        
-        x1,y1 = node.state
-        x2,y2 = self.goal
-
+    def h(self, node):
+        """Funkcja heurystyczna """
+        x1 = node.state[0]
+        y1 = node.state[1]
+        x2 = self.goal[0]
+        y2 = self.goal[1]
         return abs(x2 - x1) + abs(y2 - y1)
