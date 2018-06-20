@@ -4,6 +4,7 @@ import tensorflow as tf
 import random
 import sys
 import os
+import re
 from data import *
 
 pygame.init()
@@ -12,7 +13,7 @@ pygame.init()
 red = (255,0,0)
 block_size = 30
 clock = pygame.time.Clock()
-size = 10
+size = 20
 display = size*block_size
 gameDisplay = pygame.display.set_mode((display, display))
 
@@ -33,7 +34,23 @@ kelner_y = 0
 key = ['E', 'S', 'W', 'N']
 kuchnia = {kuchnia_x, kuchnia_y}
 tree = {(0,2),(0,4),(9,3),(9,5)}
-klient = {(8, 2), (8, 5), (8, 8), (5, 2), (5, 5), (5, 8), (2, 2), (2, 5), (2, 8)} #położenie klientów na mapie
+klient = {(19,2), 
+(0,19), 
+(15,17), 
+(19,2), 
+(2,0), 
+(3,0), 
+(0,4), 
+(0,5), 
+(19,19), 
+(18,10), 
+(0,18), 
+(0,7), 
+(19,19), 
+(14,18), 
+(18,0), 
+(18,17)} #położenie klientów na mapie
+
 wallsSet = klient | wc | kuchnia | tree
 
 
