@@ -172,18 +172,20 @@ while (running):
                 for item in zamowienia:
                     if produkt in item:
                         print (item[0])
-                        stolik = item[0]
+                        stolik_x = item[0][0]
+                        stolik_y = item[0][1]
+                        stolik = (stolik_x, stolik_y)
                         znaleziono = True
                         zamowienia.remove((stolik,produkt))
                         # Podejscie z daniem do stolika
-                        goal_x = 3
-                        goal_y = 4
+                        goal_x = stolik_x
+                        goal_y = stolik_y
                         dostarczanie_zamowienia = True
                 znaleziono = True    
 
         else:
             if j == solution_len and(goal_x != kuchnia_x and goal_y != kuchnia_y) and dostarczanie_zamowienia == False:
-                stolik = input('Podaj numer stolika: ')
+                stolik = (goal_x,goal_y)
                 danie = input('Podaj produkt: ')
                 zamowienia.append((stolik,danie)) 
 
