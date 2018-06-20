@@ -126,9 +126,8 @@ while (running):
 
         # Pojawienie się kelnera w kuchni
         if j == solution_len and(goal_x == kuchnia_x and goal_y == kuchnia_y):
+            print(zamowienia)
             tekst = input('Podaj produkt z kuchni: ')
-            print (tekst)
-
             # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
             # PROJEKT INDYWIDUALNY
             #Wyłączenie błędów kompilacji tensorflow
@@ -159,7 +158,6 @@ while (running):
                 predictions = sess.run(softmax_tensor,{'DecodeJpeg/contents:0': image_data})
                 # Sortujemy wartości według najwyższej zgodności.
                 top_k = predictions[0].argsort()[-len(predictions[0]):][::-1]
-                print(label_lines[top_k[0]])
 	            # Wyswietlenie wyników.
                 #for node_id in top_k:
                 #    human_string = label_lines[node_id]
@@ -171,7 +169,6 @@ while (running):
             while not znaleziono:
                 for item in zamowienia:
                     if produkt in item:
-                        print (item[0])
                         stolik_x = item[0][0]
                         stolik_y = item[0][1]
                         stolik = (stolik_x, stolik_y)
@@ -181,6 +178,7 @@ while (running):
                         goal_x = stolik_x
                         goal_y = stolik_y
                         dostarczanie_zamowienia = True
+                        print ("Zanoszę do stolika " + produkt)
                 znaleziono = True    
 
         else:
