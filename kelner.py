@@ -4,6 +4,7 @@ import tensorflow as tf
 import random
 import sys
 import os
+from data import *
 
 pygame.init()
 
@@ -185,7 +186,10 @@ while (running):
             if j == solution_len and(goal_x != kuchnia_x and goal_y != kuchnia_y) and dostarczanie_zamowienia == False:
                 stolik = (goal_x,goal_y)
                 danie = input('Podaj produkt: ')
-                zamowienia.append((stolik,danie)) 
+                if produkt(danie):
+                    zamowienia.append((stolik,danie))
+                else:
+                    print ("Brak produktu.") 
 
     """Poruszanie się przyciskami klawiatury"""
     pressed = pygame.key.get_pressed()
