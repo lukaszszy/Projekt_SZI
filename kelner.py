@@ -127,69 +127,69 @@ while (running):
 
         # Pojawienie się kelnera w kuchni
         if j == solution_len and(goal_x == kuchnia_x and goal_y == kuchnia_y):
-            for z in zamowienia: print (z[1], end=' ')
-            tekst = input('\nPodaj produkt z kuchni: ')
-            # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-            # PROJEKT INDYWIDUALNY
-            #Wyłączenie błędów kompilacji tensorflow
-            os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
-            # Podajemy ścieżkę do obrazu, który chcemy sklasyfikować.
-            #image_path = r"D:\SZI\materialy_do_klasyfikatora\10.jpeg"
-            image_path = r"D:\\\ProjektSZI\\\\materialy_do_klasyfikatora\\\\"
-            image_path += tekst
-            image_path += r".jpeg"
-            #image_path = sys.argv[1]
-            # Pobieramy dane z obrazu.
-            image_data = tf.gfile.FastGFile(image_path, 'rb').read()
-            # Pobieramy etykiety z pliku do tablicy 
-            label_lines = [line.rstrip() for line in tf.gfile.GFile("tf_files/retrained_labels.txt")]	   
-            # Odczytujemy graf, który wcześniej został wytrenowany
-            with tf.gfile.FastGFile("tf_files/retrained_graph.pb", 'rb') as f:
-                # Inicjalizujemy graf.
-                graph_def = tf.GraphDef()
-                # Parsujemy dane do zmiennej
-                graph_def.ParseFromString(f.read())
-                # Iportujemy zserializowany bufor protokolu do utworzonego grafu.
-                # Wyodrębniamy oiekty jako tf.Tensor
-                _ = tf.import_graph_def(graph_def, name='')	
-            with tf.Session() as sess:
-                # Uzywamy wytrenowanego modelu do klasyfikacji. 
-                softmax_tensor = sess.graph.get_tensor_by_name('final_result:0')
-                # Zwracamy wartości predykacyjne do tablicy.
-                predictions = sess.run(softmax_tensor,{'DecodeJpeg/contents:0': image_data})
-                # Sortujemy wartości według najwyższej zgodności.
-                top_k = predictions[0].argsort()[-len(predictions[0]):][::-1]
-	            # Wyswietlenie wyników.
-                #for node_id in top_k:
-                #    human_string = label_lines[node_id]
-                #    score = predictions[0][node_id]
-                #    print('%s (score = %.5f)' % (human_string, score)) 
-            # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-            produkt = label_lines[top_k[0]]
-            znaleziono = False
-            while not znaleziono:
-                for item in zamowienia:
-                    if produkt in item:
-                        stolik_x = item[0][0]
-                        stolik_y = item[0][1]
-                        stolik = (stolik_x, stolik_y)
-                        znaleziono = True
-                        zamowienia.remove((stolik,produkt))
-                        # Podejscie z daniem do stolika
-                        goal_x = stolik_x
-                        goal_y = stolik_y
-                        dostarczanie_zamowienia = True
-                        print ("Zanoszę do stolika " + produkt)
-                znaleziono = True    
+            if len(zamowienia) > 0:
+                for z in zamowienia: print (z[1], end=' ')
+                tekst = input('\nPodaj produkt z kuchni: ')
+                # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                # PROJEKT INDYWIDUALNY
+                #Wyłączenie błędów kompilacji tensorflow
+                os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+                # Podajemy ścieżkę do obrazu, który chcemy sklasyfikować.
+                #image_path = r"D:\SZI\materialy_do_klasyfikatora\10.jpeg"
+                image_path = r"D:\\\ProjektSZI\\\\materialy_do_klasyfikatora\\\\"
+                image_path += tekst
+                image_path += r".jpeg"
+                #image_path = sys.argv[1]
+                # Pobieramy dane z obrazu.
+                image_data = tf.gfile.FastGFile(image_path, 'rb').read()
+                # Pobieramy etykiety z pliku do tablicy 
+                label_lines = [line.rstrip() for line in tf.gfile.GFile("tf_files/retrained_labels.txt")]	   
+                # Odczytujemy graf, który wcześniej został wytrenowany
+                with tf.gfile.FastGFile("tf_files/retrained_graph.pb", 'rb') as f:
+                    # Inicjalizujemy graf.
+                    graph_def = tf.GraphDef()
+                    # Parsujemy dane do zmiennej
+                    graph_def.ParseFromString(f.read())
+                    # Iportujemy zserializowany bufor protokolu do utworzonego grafu.
+                    # Wyodrębniamy oiekty jako tf.Tensor
+                    _ = tf.import_graph_def(graph_def, name='')	
+                with tf.Session() as sess:
+                    # Uzywamy wytrenowanego modelu do klasyfikacji. 
+                    softmax_tensor = sess.graph.get_tensor_by_name('final_result:0')
+                    # Zwracamy wartości predykacyjne do tablicy.
+                    predictions = sess.run(softmax_tensor,{'DecodeJpeg/contents:0': image_data})
+                    # Sortujemy wartości według najwyższej zgodności.
+                    top_k = predictions[0].argsort()[-len(predictions[0]):][::-1]
+                    # Wyswietlenie wyników.
+                    #for node_id in top_k:
+                    #    human_string = label_lines[node_id]
+                    #    score = predictions[0][node_id]
+                    #    print('%s (score = %.5f)' % (human_string, score)) 
+                # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                produkt = label_lines[top_k[0]]
+                znaleziono = False
+                while not znaleziono:
+                    for item in zamowienia:
+                        if produkt in item:
+                            stolik_x = item[0][0]
+                            stolik_y = item[0][1]
+                            stolik = (stolik_x, stolik_y)
+                            znaleziono = True
+                            zamowienia.remove((stolik,produkt))
+                            # Podejscie z daniem do stolika
+                            goal_x = stolik_x
+                            goal_y = stolik_y
+                            dostarczanie_zamowienia = True
+                            print ("Zanoszę do stolika " + produkt)
+                    znaleziono = True
+            else:
+                print ("Brak produktów do wydania.")    
 
         else:
             if j == solution_len and(goal_x != kuchnia_x and goal_y != kuchnia_y) and dostarczanie_zamowienia == False:
                 stolik = (goal_x,goal_y)
                 danie = input('Podaj produkt: ')
-                if produkt(danie):
-                    zamowienia.append((stolik,danie))
-                else:
-                    print ("Brak produktu.") 
+                zamowienia.append((stolik,danie))
 
     """Poruszanie się przyciskami klawiatury"""
     pressed = pygame.key.get_pressed()
