@@ -126,8 +126,8 @@ while (running):
 
         # Pojawienie się kelnera w kuchni
         if j == solution_len and(goal_x == kuchnia_x and goal_y == kuchnia_y):
-            print(zamowienia)
-            tekst = input('Podaj produkt z kuchni: ')
+            for z in zamowienia: print (z[1], end=' ')
+            tekst = input('\nPodaj produkt z kuchni: ')
             # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
             # PROJEKT INDYWIDUALNY
             #Wyłączenie błędów kompilacji tensorflow
