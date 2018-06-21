@@ -6,8 +6,335 @@ import sys
 import os
 import re
 from data import *
+from id3 import Id3Estimator, export_graphviz
+import numpy as np
+import random
 
 pygame.init()
+
+
+#PROJEKT INDYWIDUALNY ZW
+#nazwy cech
+feature_names = ["kwasne",
+                 "gorzkie",
+                 "szybkie",
+                 "pitne","slodkie","lekkostrawne","na wynos","kaloryczne","zdrowe","ekskluzywne","tanie","smaczne"]
+				 
+#przypadki testowe z wartościami cech:
+X = np.array([
+
+[0,0,0,4,8,8,10,0,2,6,2,"tak"],
+[0,0,5,10,7,7,10,0,0,5,1,"tak"],
+[4,0,1,8,8,6,10,0,1,8,4,"tak"],
+[5,0,6,5,8,8,10,1,0,5,0,"tak"],
+[3,1,2,5,8,5,9,9,1,8,4,"tak"],
+[5,0,6,6,8,5,10,0,1,4,4,"tak"],
+[2,0,2,5,5,8,10,8,0,5,5,"tak"],
+[5,3,1,9,9,9,9,1,1,9,4,"tak"],
+[6,0,0,3,8,7,10,5,0,6,2,"tak"],
+[6,0,3,4,5,4,10,7,0,6,7,"tak"],
+[0,0,1,4,7,9,0,0,7,2,1,"tak"],
+[0,7,0,5,9,5,0,0,9,5,0,"tak"],
+[0,2,4,8,8,5,1,0,10,1,1,"tak"],
+[0,5,8,7,8,4,0,5,0,7,0,"tak"],
+[1,8,5,5,6,5,8,0,10,4,2,"tak"],
+[0,3,2,6,7,7,0,0,10,0,0,"tak"],
+[0,5,5,9,9,4,0,0,10,1,1,"przepyszne"],
+[1,9,9,9,4,4,1,1,1,9,1,"przepyszne"],
+[0,0,5,2,8,5,0,0,5,5,0,"przepyszne"],
+[0,0,3,3,7,4,0,0,8,1,5,"przepyszne"],
+[10,5,7,7,9,7,0,0,8,1,4,"przepyszne"],
+[10,7,7,10,10,10,0,0,9,0,0,"przepyszne"],
+[10,0,10,10,8,8,0,0,10,8,8,"przepyszne"],
+[10,10,10,10,10,9,0,0,9,0,7,"przepyszne"],
+[10,4,10,10,7,8,0,0,10,2,4,"przepyszne"],
+[10,10,10,10,10,10,0,0,6,0,3,"przepyszne"],
+[10,8,5,10,9,10,0,0,9,0,9,"przepyszne"],
+[10,9,9,9,9,9,1,1,9,1,4,"przepyszne"],
+[10,4,5,8,8,9,0,0,8,0,8,"przepyszne"],
+[10,4,8,8,9,8,0,0,9,0,4,"przepyszne"],
+[0,0,0,3,8,7,7,10,1,7,0,"przepyszne"],
+[0,0,0,1,4,4,10,10,0,5,0,"domowej roboty"],
+[0,0,0,2,2,4,5,10,2,9,1,"domowej roboty"],
+[0,0,3,3,6,4,10,10,0,7,0,"domowej roboty"],
+[1,1,5,3,4,5,9,9,1,7,4,"domowej roboty"],
+[0,0,1,3,3,3,10,10,0,3,3,"domowej roboty"],
+[0,0,2,2,3,1,10,10,0,7,7,"domowej roboty"],
+[1,1,1,1,1,1,9,9,1,9,1,"domowej roboty"],
+[0,0,0,2,4,2,10,10,0,5,0,"domowej roboty"],
+[0,0,3,2,3,3,10,10,0,6,3,"domowej roboty"],
+[10,5,0,9,7,7,0,0,4,1,0,"domowej roboty"],
+[10,7,0,9,9,9,10,0,7,0,0,"domowej roboty"],
+[10,0,2,8,3,6,0,0,4,8,0,"domowej roboty"],
+[10,0,5,8,9,6,0,0,6,0,0,"domowej roboty"],
+[7,3,2,7,7,7,0,0,4,1,1,"domowej roboty"],
+[10,8,1,10,10,8,0,0,7,0,0,"domowej roboty"],
+[10,8,5,7,5,9,0,0,5,0,0,"domowej roboty"],
+[10,9,1,9,9,9,1,1,9,1,1,"domowej roboty"],
+[10,5,0,8,8,8,0,0,0,0,2,"domowej roboty"],
+[10,3,4,8,8,8,0,0,9,0,0,"domowej roboty"],
+[10,5,9,8,6,8,10,0,3,3,1,"domowej roboty"],
+[10,7,10,9,9,10,10,0,7,0,3,"domowej roboty"],
+[10,7,9,8,8,9,10,0,6,5,5,"domowej roboty"],
+[10,10,10,10,10,10,10,0,8,0,0,"domowej roboty"],
+[10,2,10,10,7,7,9,0,10,1,2,"domowej roboty"],
+[10,8,8,8,10,8,10,0,5,0,0,"domowej roboty"],
+[10,8,5,7,5,9,0,0,8,1,5,"domowej roboty"],
+[10,9,9,9,3,9,9,1,9,1,3,"domowej roboty"],
+[10,5,10,10,9,8,10,0,8,0,2,"domowej roboty"],
+[10,2,10,5,7,7,10,0,3,0,0,"domowej roboty"],
+[0,0,4,4,8,4,5,8,1,7,0,"domowej roboty"],
+[0,0,0,7,7,7,8,9,0,4,0,"przecietnie"],
+[0,0,0,7,7,3,9,10,0,8,3,"przecietnie"],
+[0,0,0,5,9,7,7,10,0,5,0,"przecietnie"],
+[1,1,3,8,6,8,6,9,1,6,4,"przecietnie"],
+[0,0,2,4,5,4,10,10,0,2,0,"przecietnie"],
+[0,0,2,5,5,3,5,10,0,8,8,"przecietnie"],
+[1,1,1,9,9,4,1,1,1,9,1,"przecietnie"],
+[0,0,0,7,7,4,5,5,0,5,0,"przecietnie"],
+[0,0,2,3,4,3,10,10,0,6,0,"przecietnie"],
+[10,5,3,8,10,5,0,0,7,1,1,"przecietnie"],
+[10,7,0,9,10,8,0,0,8,0,0,"przecietnie"],
+[10,0,3,8,8,8,0,0,8,8,3,"przecietnie"],
+[10,10,5,10,10,6,0,0,6,0,0,"przecietnie"],
+[8,1,5,8,8,7,0,0,5,1,1,"przecietnie"],
+[10,6,5,10,10,8,0,0,8,0,0,"przecietnie"],
+[10,0,5,9,8,10,0,0,10,0,0,"przecietnie"],
+[10,9,1,9,9,9,1,1,9,1,1,"przecietnie"],
+[10,5,5,8,8,7,0,0,10,0,3,"przecietnie"],
+[10,1,2,10,9,9,0,0,9,0,0,"przecietnie"],
+[0,0,1,3,5,3,9,10,2,5,4,"przecietnie"],
+[0,0,0,1,5,3,10,10,0,7,0,"przecietnie"],
+[0,0,0,4,3,3,8,10,2,8,1,"przecietnie"],
+[0,0,2,5,6,4,10,10,0,7,0,"przecietnie"],
+[1,1,5,3,6,4,9,9,1,10,4,"przecietnie"],
+[0,0,1,4,4,3,10,10,0,2,2,"przecietnie"],
+[0,0,5,3,5,0,10,10,0,6,6,"przecietnie"],
+[1,1,1,1,3,1,9,9,1,9,1,"przecietnie"],
+[0,0,0,2,3,6,5,10,0,5,0,"przecietnie"],
+[0,0,2,2,2,2,10,10,0,6,2,"przecietnie"],
+[0,0,0,5,5,2,8,8,2,7,2,"przecietnie"],
+[0,0,0,3,5,4,9,9,0,6,2,"tak"],
+[0,0,1,2,2,2,6,10,1,8,1,"tak"],
+[0,5,5,3,6,4,8,8,0,0,0,"tak"],
+[1,1,4,2,5,4,9,9,1,7,3,"tak"],
+[0,0,2,5,5,5,10,10,0,0,2,"tak"],
+[0,0,5,8,9,0,10,10,0,5,5,"tak"],
+[1,4,4,9,4,3,9,1,1,9,1,"tak"],
+[0,0,0,2,3,3,5,5,0,5,0,"tak"],
+[0,0,2,2,2,2,8,10,0,6,1,"tak"],
+[0,0,0,4,2,2,2,9,1,7,1,"tak"],
+[0,0,0,3,5,3,9,9,0,5,2,"tak"],
+[0,0,0,5,5,5,7,8,0,8,2,"tak"],
+[0,8,0,2,4,3,5,10,0,5,0,"tak"],
+[1,1,4,2,5,4,9,9,1,6,3,"tak"],
+[0,0,2,5,5,6,10,10,1,3,2,"tak"],
+[0,0,5,5,5,0,10,10,0,5,5,"tak"],
+[1,1,1,9,3,1,9,9,1,9,1,"tak"],
+[0,0,0,2,3,1,5,5,0,5,2,"tak"],
+[0,0,2,4,4,2,5,10,0,5,1,"tak"],
+[0,0,9,0,4,0,10,0,1,8,2,"tak"],
+[0,0,10,10,9,5,10,0,0,4,5,"tak"],
+[0,3,10,8,5,4,10,1,1,8,3,"tak"],
+[0,8,10,10,8,8,10,0,8,0,8,"tak"],
+[1,1,10,5,7,5,9,0,1,5,3,"tak"],
+[0,4,10,10,9,8,10,0,3,2,2,"tak"],
+[0,0,5,5,5,5,10,10,0,5,5,"tak"],
+[1,9,9,9,9,9,9,1,1,9,9,"tak"],
+[0,0,10,8,3,5,10,0,0,5,2,"tak"],
+[0,0,10,5,5,3,0,1,0,3,5,"tak"],
+[0,10,5,5,3,3,0,0,10,1,0,"tak"],
+[0,10,8,10,7,5,0,0,10,0,0,"tak"],
+[0,10,9,10,4,3,0,0,10,2,7,"tak"],
+[0,10,10,10,8,6,0,0,10,0,0,"tak"],
+[1,10,10,3,6,6,6,0,10,2,2,"tak"],
+[0,10,10,10,8,7,0,0,10,0,0,"tak"],
+[0,10,10,5,5,2,0,0,10,0,0,"tak"],
+[1,9,9,9,3,9,1,1,9,1,1,"tak"],
+[0,10,5,2,4,4,0,0,10,0,0,"tak"],
+[0,10,10,2,2,2,10,0,10,0,0,"tak"],
+[0,0,1,5,9,5,8,8,1,7,2,"tak"],
+[3,0,0,10,9,7,8,9,0,2,0,"tak"],
+[4,0,1,3,7,5,8,5,1,9,4,"tak"],
+[5,0,5,8,8,6,5,5,0,5,0,"tak"],
+[3,1,3,3,7,7,9,9,1,5,4,"tak"],
+[5,0,2,8,8,5,10,10,0,4,1,"tak"],
+[5,0,5,2,5,5,10,10,0,5,5,"tak"],
+[1,1,1,9,9,9,9,1,1,9,1,"tak"],
+[6,0,0,3,3,4,5,5,0,5,1,"tak"],
+[8,0,2,2,4,6,1,10,0,8,2,"tak"],
+[0,0,10,5,5,3,8,7,3,5,4,"tak"],
+[1,0,10,10,7,7,10,0,0,6,4,"tak"],
+[4,2,9,8,6,5,5,1,2,9,5,"tak"],
+[5,6,8,8,8,6,8,10,5,0,5,"tak"],
+[3,1,10,3,6,5,9,6,1,5,4,"tak"],
+[5,5,8,7,6,6,10,0,2,3,4,"tak"],
+[5,0,10,5,5,5,10,10,0,5,5,"tak"],
+[1,9,9,9,9,9,9,1,1,9,1,"tak"],
+[6,0,10,5,5,6,10,0,5,5,2,"tak"],
+[6,0,10,4,4,6,0,2,0,4,5,"tak"]])
+y = np.array(
+["chlodnik",
+"chlodnik",
+"chlodnik",
+"chlodnik",
+"chlodnik",
+"chlodnik",
+"chlodnik",
+"chlodnik",
+"chlodnik",
+"chlodnik",
+"chlodnik",
+"chlodnik",
+"chlodnik",
+"chlodnik",
+"chlodnik",
+"ciasto czekoladowe",
+"ciasto czekoladowe",
+"ciasto czekoladowe",
+"ciasto czekoladowe",
+"ciasto czekoladowe",
+"ciasto czekoladowe",
+"ciasto czekoladowe",
+"ciasto czekoladowe",
+"ciasto czekoladowe",
+"ciasto czekoladowe",
+"ciasto czekoladowe",
+"ciasto czekoladowe",
+"ciasto czekoladowe",
+"ciasto czekoladowe",
+"ciasto czekoladowe",
+"frytki",
+"frytki",
+"frytki",
+"frytki",
+"frytki",
+"frytki",
+"frytki",
+"frytki",
+"frytki",
+"frytki",
+"frytki",
+"frytki",
+"frytki",
+"frytki",
+"frytki",
+"krokiety z miesem",
+"krokiety z miesem",
+"krokiety z miesem",
+"krokiety z miesem",
+"krokiety z miesem",
+"krokiety z miesem",
+"krokiety z miesem",
+"krokiety z miesem",
+"krokiety z miesem",
+"krokiety z miesem",
+"krokiety z miesem",
+"krokiety z miesem",
+"krokiety z miesem",
+"krokiety z miesem",
+"krokiety z miesem",
+"lody truskawkowe",
+"lody truskawkowe",
+"lody truskawkowe",
+"lody truskawkowe",
+"lody truskawkowe",
+"lody truskawkowe",
+"lody truskawkowe",
+"lody truskawkowe",
+"lody truskawkowe",
+"lody truskawkowe",
+"lody truskawkowe",
+"lody truskawkowe",
+"lody truskawkowe",
+"lody truskawkowe",
+"lody truskawkowe",
+"ryz",
+"ryz",
+"ryz",
+"ryz",
+"ryz",
+"ryz",
+"ryz",
+"ryz",
+"ryz",
+"ryz",
+"ryz",
+"ryz",
+"ryz",
+"ryz",
+"ryz",
+"sok pomaranczowy",
+"sok pomaranczowy",
+"sok pomaranczowy",
+"sok pomaranczowy",
+"sok pomaranczowy",
+"sok pomaranczowy",
+"sok pomaranczowy",
+"sok pomaranczowy",
+"sok pomaranczowy",
+"sok pomaranczowy",
+"sok pomaranczowy",
+"sok pomaranczowy",
+"sok pomaranczowy",
+"sok pomaranczowy",
+"sok pomaranczowy",
+"spaghetti po bolonsku",
+"spaghetti po bolonsku",
+"spaghetti po bolonsku",
+"spaghetti po bolonsku",
+"spaghetti po bolonsku",
+"spaghetti po bolonsku",
+"spaghetti po bolonsku",
+"spaghetti po bolonsku",
+"spaghetti po bolonsku",
+"spaghetti po bolonsku",
+"spaghetti po bolonsku",
+"spaghetti po bolonsku",
+"spaghetti po bolonsku",
+"spaghetti po bolonsku",
+"spaghetti po bolonsku",
+"wino czerwone",
+"wino czerwone",
+"wino czerwone",
+"wino czerwone",
+"wino czerwone",
+"wino czerwone",
+"wino czerwone",
+"wino czerwone",
+"wino czerwone",
+"wino czerwone",
+"wino czerwone",
+"wino czerwone",
+"wino czerwone",
+"wino czerwone",
+"wino czerwone",
+"zupa pomidorowa",
+"zupa pomidorowa",
+"zupa pomidorowa",
+"zupa pomidorowa",
+"zupa pomidorowa",
+"zupa pomidorowa",
+"zupa pomidorowa",
+"zupa pomidorowa",
+"zupa pomidorowa",
+"zupa pomidorowa",
+"zupa pomidorowa",
+"zupa pomidorowa",
+"zupa pomidorowa",
+"zupa pomidorowa",
+"zupa pomidorowa",
+])
+# tworzenie drzewa decyzyjnego
+clf = Id3Estimator()
+# fit - synonim do "find patterns in data"
+clf.fit(X, y, check_input=True)
+
+
+
+export_graphviz(clf.tree_, "test.dot", feature_names)
+
+
 
 #Rzeczy konfiguracyjne
 red = (255,0,0)
@@ -105,7 +432,7 @@ while (running):
                 if (astar_search(route) != None):
                     solution = astar_search(route).solution()
                     solution_len = solution.__len__()
-                    print(solution)
+#                    print(solution)
         else:
             dostarczanie_zamowienia = True
             kelner_position_x = (kelner_x/block_size)
@@ -118,7 +445,7 @@ while (running):
                 if (astar_search(route) != None):
                     solution = astar_search(route).solution()
                     solution_len = solution.__len__()
-                    print(solution)
+ #                   print(solution)
 
     if j>=0 and j < solution_len and (solution != None):
         x = solution[j]
@@ -153,7 +480,7 @@ while (running):
                 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
                 # Podajemy ścieżkę do obrazu, który chcemy sklasyfikować.
                 #image_path = r"D:\SZI\materialy_do_klasyfikatora\10.jpeg"
-                image_path = r"D:\\\ProjektSZI\\\\materialy_do_klasyfikatora\\\\"
+                image_path = r"C:\\\\Users\\\\Amu\\\\Downloads\\\\A_Sztuczna_inteligencja\\\\materialy_do_klasyfikatora\\\\"
                 image_path += tekst
                 image_path += r".jpeg"
                 #image_path = sys.argv[1]
@@ -203,9 +530,22 @@ while (running):
                 print ("Brak produktów do wydania.")    
 
         else:
-            if j == solution_len and(goal_x != kuchnia_x and goal_y != kuchnia_y) and dostarczanie_zamowienia == False:
+            if j == solution_len and(goal_x != kuchnia_x and goal_y != kuchnia_y) and dostarczanie_zamowienia == False:						        
+                print('Jaki chcesz produkt? "kwasne", "gorzkie","szybkie","pitne","slodkie","lekkostrawne","na wynos","kaloryczne","zdrowe","ekskluzywne","tanie","smaczne. Wybierz dwie cechy')
+                produkt1 = input('Podaj jaki: ')
+                produkt2 = input('Podaj jaki: ')
+
+                dod = []
+                for i in range(0,149):
+                    dod = X[i]
+                    if(dod[4] == '10' and produkt1 == 'slodkie'):
+                        danie = (clf.predict(X)[i]) #wyswietla jedena decyzje z tablicy X
+                        print('Kelner: Czy odpowiada Panu danie: ' + danie)
+                        print('Tak')
+                        break
+				   
                 stolik = (goal_x,goal_y)
-                danie = input('Podaj produkt: ')
+#                danie = input('Podaj produkt: ')
                 zamowienia.append((stolik,danie))
 
     """Poruszanie się przyciskami klawiatury"""
